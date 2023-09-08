@@ -1,23 +1,7 @@
 import os.path
 import csv
 import sys
-
-
-def retry(func):
-    def wrapper(*args):
-        while func(*args):
-            print("Error occurred, try one more time to write correct data.")
-
-    return wrapper
-
-
-# class Data:
-#     file_path = ''
-#     headers = []
-#     data = []
-#     region = ''
-#     column_num = -1
-
+import math
 
 class Get:
     def __init__(self):
@@ -36,6 +20,7 @@ class Get:
         self.__get_data()
         self.__get_column_num()
         self.__calc_metrics()
+        self.__clear_data()
 
     def __get_path(self):
         print("FILE PATH")
@@ -53,9 +38,6 @@ class Get:
                 self.headers = next(reader)
                 print(self.headers)
                 for row in reader:
-                    # if len(row) != 7:
-                    #     self.__clear_data()
-                    #     break
                     if row[1] == self.region:
                         self.data.append(row)
                         print(self.data[-1])
@@ -84,7 +66,8 @@ class Get:
             reader = csv.reader(f, delimiter=",")
             next(reader)
             for row in reader:
-                self.regions.add(row[1])
+                if not (self.is_number(row[1])) and len(row[1]) != 0:
+                    self.regions.add(row[1])
         self.regions = sorted(list(self.regions))
         for ind in range(1, len(self.regions) + 1):
             print(f'{ind}. {self.regions[ind-1]}')
@@ -115,15 +98,37 @@ class Get:
 
     def __calc_metrics(self):
         print('CALCULATE METRICS')
-        print(f'Maximum: {max(self.col_data)}')
-        print(f'Minimum: {min(self.col_data)}')
-        print(f'Median: {self.med(self.col_data)}')
+        if len(self.col_data):
+            print(f'Maximum: {max(self.col_data)}')
+            print(f'Minimum: {min(self.col_data)}')
+            print(f'Median: {self.med(self.col_data)}')
+            print(f'Average: {sum(self.col_data)/len(self.col_data)}')
+            self.print_percentile_table()
+        else:
+            print("There is no data to calculate!")
 
     @staticmethod
     def med(data_list):
         data_list.sort()
         return data_list[len(data_list)//2] if len(data_list) % 2 else (data_list[len(data_list)//2]+data_list[len(data_list)//2-1])/2
 
+    @staticmethod
+    def percentile(list, percent):
+        sorted_list = sorted(list)
+        x = percent/100 * (len(sorted_list) - 1) + 1
+        elem1 = sorted_list[int(x) - 1] #v(n)
+        elem2 = sorted_list[math.ceil(x)-1] # v(n+1)
+        _x = x % int(x)
+        return round(elem1 + _x * (elem2 - elem1), 4)
+
+    def print_percentile_table(self):
+        print("+-------+-------------+")
+        print("|   N%  |  Percentile |")
+        print("+-------+-------------+")
+        for i in range(0, 101, 5):
+            digit = self.percentile(self.col_data, i)
+            print(f"|{' ' * (4 - len(str(i)))}{i}%  |  {digit}{' ' * (10 - len(str(digit)) + 1)}|")
+        print("+-------+-------------+")
     def __clear_data(self):
         self.file_path = ''
         self.headers = []
