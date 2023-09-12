@@ -1,8 +1,8 @@
-from get import Get
+from parser import Parser
 
 
 def start():
-    file_parse = Get()
+    file_parse = Parser()
     file_parse.entry()
 
 

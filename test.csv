@@ -1,5 +1,5 @@
-year,region,npg,birth_rate,death_rate,gdw,urbanization
-2002,Saratov Oblast,fff,8.7,16.6,67.22,73.48
+year,region,birth_rate,death_rate,gdw,urbanization
+2002,Saratov Oblast,fffte,8.7,16.6,67.22,73.48
 2002,,Sakhalin Oblast,10.2,15.0,51.01,86.73
 2002,Sverdlovsk Oblast,-7.2,9.9,17.1,62.67,87.88
 2002,Sevastopol,,,,,
